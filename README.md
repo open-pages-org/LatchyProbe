@@ -1,7 +1,7 @@
 # Latchy Probe
 3D printable alternative to the Omron TL-Q5MC2 inductive sensor commonly used on FDM printers for bed levelling
 
-Having a printer with no auto bed levelling is frustrating, BL-Touch is a common choice, Inductive probes are simple off the shelf item, Klicky and Un-Klicky probes can be printed but need magnets.
+Having a printer with no auto bed levelling is frustrating, BL-Touch is a common choice, Inductive probes are simple off the shelf item, Klicky and Unklicky probes can be printed but need magnets.
 
 What if there was an alternative that you could easily print and only needs a few parts that you probably already have?
 
@@ -22,78 +22,85 @@ with some additions:
 - no need to buy special parts and uses common items found at home
 - does not have detatachable parts
 
-# Presenting the Latchy Probe
-<img src="./Probes/KlickyNG/Photos/klickyNG.png" alt="klickyprobe" style="zoom:50%;" />
+The Latchy Pprobe has been developed over many months, dozens of prototypes and 3 full test versions. Testing on a Creality CR10 (my Voron is stil in the pipeline) and works well. The design is optimised for FDM printing but has the possibility of minaturisation using resin printing. I am always looking for improvemetns so any feedback is welcome here or on Discord ( crashysmashy1 )
+
+If you want to donate something to support this project, please use this [link](https://paypal.me/CrashySmashy?country.x=GB&locale.x=en_GB) to boost the much needed coffee supplies - thanks.
+
+## Presenting the Latchy Probe
+<img src="Images/Latchy Probe.jpg" alt="latchyprobe" style="zoom:5%;" />
+
+Latchy Probe is a direct size for for size replacement for the omron TL-Q5MC2 inductive probe, this allows it to use the same mounting points and adaptaors for many printers. 
+
+So what is Latchy Probe?
+
+- It the same size as the inductive probe but it is a physical contact switch. 
+- It is deployed using the 3D printers motion system like Klicky but by pushing the probe tip down on to a trigger post. 
+- It has similar internal contacts to Unclicky but no detachable parts. 
+- The probe tip retracts when not in use similar to a BLTouch. 
+
+Most importantly, it is cheap, accurate and can be built at home using parts from a retactable pen (now you know why you grabbed all those free pens at trade fairs).
+
+Electrically it uses only 2 wires that can be connected to the probe input on controller boards, no external signals or power connections are needed. The probe circuit is fail safe because it has a normally closed circuit when corectly deployed, if the circuit reads open the printer will assume the probe is in surface contact and stop.
+
+The trigger post can be located in various positions. For a bed slinger this can be at one end of the X axis. For Core XY this can be near the Z homing pin. The trigger post can be rigid or flexible, the flexible post allows for accidental horizontal contact between the probe and the post without incident.
+
+Just like Klicky, macros allow the deployment process to be automated and example macros for deploment and retraction moves have been provided here XXXX.  If the probe is not deployed before use the probe circuit will remain open and therfore the standard Klipper macros will report 'Probe is already triggered' and stop. 
 
 
-Latchy Probe is a direct size for for size replacement for the omron TL-Q5MC2 inductive probe, this allows it to use the same mounting points or adaptaors. 
+## Building the Probe
 
-The only difference in operation is the probe tip is deployed and retracted by pushing the probe tip down on to a trigger post just like using retractable pen. This process can be automated by adjusting the existing macros to include the extend/retract moves.
+The probe only requires 3 printed parts, a spring (from a retractable pen), thick copper wire for the contacts, 1.3mm diameter is ideal (16AWG, 17SWG or 18SWG), connection wiring and mounting screws.
 
-The trigger post can be rigid or flexible. The flexible option ensures any accidental horizontal contact between the probe and the post does not cause breakages.
+###Print the parts, 
+The compenents have multiple small surfaces and unfortunately this required a well tuned printer to get very clean prints the have:
+- no stringing
+- no layer zits
+- no blobs
+- no elephant foot
+- no over extrusion
 
-I have included example macros for deploment and retraction moves, however the probe is generally set up as fail safe. If the probe is not deployed before use the probe connection will be open and therfore the normal Klipper macros will report 'Probe is already triggered' and stop. 
+The parts need to be dimensionally accurate so it is helpfult to use the following settings:
+- slow print speed with sufficient cooling
+- small layer heigh (0.1mm)
+- a quality 0.4mm nozzle or finer nozzle if available
 
-The probe has been developmed over many months and after dozens of prototypes 3 versions have been fully tested on a Creality CR10 (my Voron is stil in the pipeline) and works well. It has been a challenge to get the design reliable to 3D print on FDM due to the close tollerances, I am always looking for improvemetns so any feedback is welcome here or on Discord ( crashysmashy1 )
+Parts to print:
+- Probe Body (select the body to suite the available wire size)
+- Probe Pin  (select the pin to suite the available wire size)
+- Probe Latch
 
-If you want to donate something regarding this project, please use this [link](https://paypal.me/CrashySmashy?country.x=GB&locale.x=en_GB) to top up the tea kitty - thanks.
+- Optional bending and cutting jig for cross pin  (select the jig to suite the available wire size)
 
-
-Building the Probe
-
-The probe only requires 3 printed parts, a spring (from a retractable pen) and thick copper wire for the contacts.
-
-Print the parts, these must be:
-- very clean prints with no stringing, zits or elephant foot
-- dimensionally accurate - it is worth slowing down, reducing the layer hight and possibly switching to a fine nozzle if avaialble (although 0.4 works)
-
-Find a spring from a doner pen
-
-Cut some short lengths of copper wire
-
+###Find a spring from a doner pen
+Spring diameter - this needs to be smaller than 4.5mm diamter but larger than 3mm an ideal size is 4.25mm
+Spring length - this needs to be approximately 23mm free lenght and 7mm compressed.
+Spring force - 0.35mm wire diameter gives a good level of force
+Note: if the spring is too soft the contacts will not be reliable. If the spring is too stiff it will displace the bed surface when probing giving inaccurate readings.
 
 
-If you are upgrading from an earlier version, check the klipper macros folder, it contains update instructions.
+Selecting and building the trigger post and mounting brackets
+(not including the trigger post assembly or monting brackets)
 
-Probe options
-Right now, there are two probe attachment options, each with two probe types.
 
-Regular Klicky
-First klicky probe, based on the Quickdraw probe, with an added third magnet for added stability and fixed dock gantry setups.
+Cut 3 short lengths (approx 15mm) of copper wire
 
-klickyprobe
-
-It uses magnets to secure the probe to the mount and also to make the electrical connection. The magnets can be glued to prevent them from coming loose. It supports a microswitch probe and Unklicky (invented by DustinSpeed) (self built probe, that so far surpasses the microswitches in common use) based probing.
-
-Assembly instruction
-KlickyNG
-New enclosed magnets probe, it does not require glue to help prevent the magnets from coming loose, magnets are also self aligning. This approach only uses common and easy to source parts.
-
-klickyprobe
-
-Also supports microswitch probe and Unklicky (invented by DustinSpeed) (self built probe, that so far surpasses the microswitches in common use) based probing.
-
-Assembly instruction
-Printers With detailed instructions and specific parts (by support order)
-The specific parts with install, configuration, troubleshoot and recommended settings can be found on each printer page, linked below.
-
-Voron v2.4
-
-Voron v1.8
-
-Voron Legacy
-
-Voron Trident
-
-Voron v0
-
-VCore 3.0/3.1
-
-MercuryOne
-
-Voron Switchwire
-
+If you need a trigger post for your printer then let me know and I can try to help create some standard parts.
 There are also docks and mounts submitted by users to support other printers and toolheads, you should check it out.
+[Voron v2.4](./Printers/Voron/v1.8_v2.4_Legacy_Trident)
+
+[Voron v1.8](./Printers/Voron/v1.8_v2.4_Legacy_Trident)
+
+[Voron Legacy](./Printers/Voron/v1.8_v2.4_Legacy_Trident)
+
+[Voron Trident](./Printers/Voron/v1.8_v2.4_Legacy_Trident)
+
+[Voron v0](./Printers/Voron/v0)
+
+[VCore 3.0/3.1 ](./Printers/Ratrig/VCore3.0_3.1)
+
+[MercuryOne](./Printers/ZeroG/Mercury_One)
+
+[Voron Switchwire](./Printers/Voron/Switchwire)
 
 Klicky Probe imageklicky early version.
 
@@ -124,29 +131,18 @@ Each printer family/version has it's own mounting options, Bill of Materials, as
 
 General Bill of Materials (BOM)
 Tools:
-
+3D Printer etc.
 1.5mm Drill (optional)
 Multimeter to check for Continuity
-Super Glue
-Soldering Iron for the heat inserts
+Wire Cutters
+
 Probe BOM:
 
-1x microswitch (the omron D2F-5 or D2F-5L (removing the lever) is recommended), D2F-1 and similar sizes microswitch also work
-2x M2x10 mm self tapping
-some 6 mm x 3 mm magnets (it ranges from 8 to 10)
-some m5 screws
-some m3 screws
-some m3 heat inserts
-some m3 nuts
-Sourcing guide
-To get the best experience, please consider purchasing from the trusted list of suppliers bellow.
+Filament
+Spring from an old pen
+Copper Wire (1.3mm diameter)
+Connection wires
+Mounting screws
 
-trusted suppliers list
 
-Assembled Klicky Probe on a Voron v2.4
-Assembled Klicky Probe
-Dock and undock video
- Dock_and_Undock.mp4 
-It is working very well, if you decide to use it, give me feedback, either here, or on Voron discord, my discord user is JosAr#0517.
-
-By standing on the shoulders of giants, lets see if we can see further.
+Klicky said it best: By standing on the shoulders of giants, lets see if we can see further.
