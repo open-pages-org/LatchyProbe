@@ -27,7 +27,7 @@ The Latchy Pprobe has been developed over many months, dozens of prototypes and 
 If you want to donate something to support this project, please use this [link](https://paypal.me/CrashySmashy?country.x=GB&locale.x=en_GB) to boost the much needed coffee supplies - thanks.
 
 ## Presenting the Latchy Probe
-<img src="Images/Latchy Probe.jpg" alt="latchyprobe" width="300" style="zoom:50%;" />
+<img src="Images/Latchy Probe.jpg" alt="latchyprobe" width="600" style="zoom:50%;" />
 
 Latchy Probe is a direct size for for size replacement for the omron TL-Q5MC2 inductive probe, this allows it to use the same mounting points and adaptaors for many printers. 
 
@@ -80,36 +80,71 @@ Note: if the spring is too soft the contacts will not be reliable. If the spring
 
 ### Assembly
 
-Cut 3 lengths of copper wire approximately 15mm long. Bend 1 piece to match the profile of the jig and trim the ends flush with the jig, make sure there are no burs, round the ends with a file if needed.
+1) Cut 3 lengths of copper wire approximately 15mm long. Bend 1 piece to match the profile of the jig and trim the ends flush with the jig, make sure there are no burs, round the ends with a file if needed.
 
-1) Insert the latch part into the probe part, the latch should rotate freely, bumping up and down on the ramps.
-2) Insert the copper cross pin (this retains the parts and forms the electrical contact). The latch should still rotate freely, bumping up and down on the ramps.
-3) Insert the spring into the cup on the latch
-4) Insert the assembly into the body and stand on end. The assebmly should slide in and out smoothly for the first 5mm. The resting position should be as shown so that light spring compression will move the cross pin into the body.
-5) Time for inital testing
+<img src="Images/PinBendingJig.jpg" alt="Pin bending jig" width="300" style="zoom:50%;" />
+
+2) Insert the latch part into the probe part, the latch should rotate freely, bumping up and down on the ramps.
+
+<img src="Images/latch and probe.jpg" alt="Images/latch and probe" width="300" style="zoom:50%;" />
+    
+3) Insert the copper cross pin (this retains the parts and forms the electrical contact). The latch should still rotate freely, bumping up and down on the ramps.
+
+<img src="Images/LatchProbePin.jpg" alt="Latch in Probe with Pin" width="300" style="zoom:50%;" />
+ 
+4) Insert the spring into the cup on the latch
    
-Press the assmbly further into the body and it should latch in place. Press again and it should release. The latch rotates with each click and if there are any thick layer lines, blobs, zits or strings the part will not rotate.
+<img src="Images/probe assembly.jpg" alt="probe assembly" width="300" style="zoom:50%;" />
+   
+5) Insert the assembly into the body and stand on end. The assebmly should slide in and out smoothly for the first 5mm. The resting position should be as shown so that light spring compression will move the cross pin into the body.
 
-The spring force is not high and when first assembled the latch may not index smoothly. The hole in the top of the body can be used to push on the back of the pin assembly to help the rotation. Usually after a few clicks and small burrs are smoothed out and the latch works reliably. If necessary, clean up the parts and sand lighlty to reduce layer lines on the sliding surfaces. 
+<img src="Images/probeposition.jpg" alt="probe in initial position" width="300" style="zoom:50%;" />
+   
+6) Time for inital testing
+   
+Press the assmbly further into the body and it should latch in place. Press again and it should release. 
+
+The latch rotates inside the body with each click and if there are any thick layer lines, blobs, zits or strings the part may not rotate reliably.
+
+The spring force is not high and when first assembled the latch may not rotate or slide smoothly. The hole in the top of the body can be used to push the pin assembly down and help the rotation. Usually after a few clicks any small burrs are smoothed out and the latch works reliably. If necessary, clean up the parts and sand lighlty to reduce layer lines on the sliding surfaces. 
   
 7) Strip the connection wires back about 5 to 7mm
-8) With the pin inserted and lactched, insert the connection wire into the body, do not insert too far, only insert the stranded wires and not the insualtion
+  
+<img src="Images/wire preparation.jpg" alt="wire preparation" width="300" style="zoom:50%;" />
+   
+8) With the pin inserted and lactched, insert the connection wire into the body. Do not insert too far, only insert the stranded wires and not the insualtion.
+
+<img src="Images/wire insertion too far.jpg" alt="wire insertion too far" width="300" style="zoom:50%;" />
+   
 9) Insert the copper pin approximately 10mm, this must be stiff to grip the braided wires and extend across the slot to form the contact. If the wire is too fat it may split the body apart, if needed either drill the holes larger, print a different body or use thinner wire.
-10) Repeat step 7 with the second copper pin.
-      NOTE 1: It is Important that both pins are the same diameter and sit evenly in the body. If these pins are uneven then the cross pin will not be able to make reliable contact. 
-      NOTE 2: There is an alternative option to use a crimp pin from a JST socket. Select a size that can be easiy inserted into the probe body but be warned there is no release hole and pins are likey to be damaged on removal.
-11) Time for initial electrical testing - test the electrical continuity, the probe completes the circuit when extended and remains retracted when pressed once.
-12) Once tested bend the end of the copper pins down into the wire slot. Pins can therfore be removed easily by levering out with a small screwdriver.
-13) Route the wires in the channel on the body.
+    
+<img src="Images/Contact pin insertion.jpg" alt="contact pin insertion" width="300" style="zoom:50%;" />
 
+10) Bend the end of the copper pins down into the wire slot. Pins can be removed relatively easily by levering out with a small screwdriver.
 
-##Selecting and building the trigger post and mounting brackets
+<img src="Images/bend pin flush.jpg" alt="bend pin flush" width="300" style="zoom:50%;" />
+      
+11) Repeat step 7 with the second copper pin.
+    
+NOTE 1: It is Important that both pins are the same diameter and sit evenly in the body. If these pins are uneven then the cross pin will not be able to make reliable contact. 
+
+NOTE 2: There is an alternative option to use a crimp pin from a JST socket. Select a size that can be easiy inserted into the probe body but be warned there is no release hole and pins are likey to be damaged on removal.
+ 
+<img src="Images/alternative crimp pin.jpg" alt="alternative crimp pin" width="300" style="zoom:50%;" />
+    
+12) Route the wires in the channel on the body.
+
+<img src="Images/Wireguide.jpg" alt="wired guide" width="300" style="zoom:50%;" />
+
+### The probe is now assembled and ready for initial electrical testing.
+
+Test the electrical continuity, the circuit should be complete when the probe is extended. When the probe is pressed in a fraction of a mm the circuit should open. The contact pins need to be firmly mounted and have no movement or flex in the body to produce repeatable measurements.
+
+## Selecting and building the trigger post and mounting brackets
 (not including the trigger post assembly or monting brackets)
 
 
-Cut 3 short lengths (approx 15mm) of copper wire
-
-If you need a trigger post for your printer then let me know and I can try to help create some standard parts.
+If you need help designing a trigger post for your specific printer then let me know and I can try to help create some standard parts.
 There are also docks and mounts submitted by users to support other printers and toolheads, you should check it out.
 [Voron v2.4](./Printers/Voron/v1.8_v2.4_Legacy_Trident)
 
