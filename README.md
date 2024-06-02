@@ -47,7 +47,7 @@ The probe is deployed by pressing the tip down onto a small post located on the 
 - For Core XY the post can be near the Z homing pin.
 The trigger post can be rigid or flexible, a flexible post allows for accidental horizontal contact between the probe and the post without incident.
 
-Macros allow the deployment process to be automated. Example macros for deployment and retraction moves are provided [here](XXXX). If the probe is not deployed before use, the probe circuit will remain open, and standard Klipper macros will report "Probe is already triggered" and stop.
+Macros allow the deployment process to be automated. Example macros for deployment and retraction moves are provided [here](Macros/README.md). If the probe is not deployed before use, the probe circuit will remain open, and standard Klipper macros will report "Probe is already triggered" and stop.
 
 ## Building the Probe
 
