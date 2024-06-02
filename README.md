@@ -168,4 +168,3 @@ If you need help designing a trigger post for your specific printer, let me know
 - Multimeter to check for continuity
 - Wire Cutters
 
-### as Klicky said : By standing on the shoulders of giants, let's see if we can see further.
