@@ -1,37 +1,32 @@
 # Klipper macros
 
 
-The macros are similar to those for other docable probes [here](docs/Dockable_Probe.md)
+The macros are similar to those for other dockable probes [here](docs/Dockable_Probe.md) 
+
+The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuation
 
 The standard macros do not include the deployment and retration of the probe so these actions can be added to  macro as needing using the following format:
 
+``` general format
 [gcode_macro MACRO_NAME]
 rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
 gcode:
   PROBE_OUT  #Deploy the probe
   _MACRO_NAME #Call the original macro that was renamed
   PROBE_IN  #Retract the probe
-  
-The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuation
+```
 
 Homing the printer with the probe extended may damage the probe if it dragged sideways on the bed, home x and y first before homing z. Before homing it may be helpful to lift the print head 5mm to ensure the probe is clear of the surface before homing.
 
+``` Safe Z Home
 [safe_z_home]
 home_xy_position: 0,0 # Change coordinates to the center of your print bed
 speed: 50
 z_hop: 5 # Move up 5mm
 z_hop_speed: 5
+```
 
-[gcode_macro MACRO_NAME]
-rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
-gcode:
-  PROBE_OUT  #Deploy the probe
-  _MACRO_NAME #Call the original macro that was renamed
-  PROBE_IN  #Retract the probe
-
-The movements to retract and demply the probe are identicle however there are spearate macros for PROBE_OUT and PROBE_IN that check the current status of the probe before perforning the action.
-
-Note also that due to the way templates are evaluated we have separate macros for checking status and setting a global variable prior to the if statements.
+The movements to retract and demply the probe are identical however there are separate macros for PROBE_OUT and PROBE_IN that check the current status of the probe before perforning the action. Note also, due to the way templates are evaluated, separate macros are needed for checking the status to the macros for perforing actions.
 
 ## Include the configuration for the probe details
 
@@ -106,7 +101,7 @@ horizontal_move_z: 10
 screw_thread: CW-M3
 ```
 
-# These macros control the probe deployment
+# The following macros control the probe deployment and motion
 
 ## Macro to deploy the probe
 [gcode_macro PROBE_OUT]
