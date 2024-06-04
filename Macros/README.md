@@ -5,9 +5,22 @@ The macros are similar to those for other docable probes [here](docs/Dockable_Pr
 
 The standard macros do not include the deployment and retration of the probe so these actions can be added to  macro as needing using the following format:
 
+[gcode_macro MACRO_NAME]
+rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
+gcode:
+  PROBE_OUT  #Deploy the probe
+  _MACRO_NAME #Call the original macro that was renamed
+  PROBE_IN  #Retract the probe
+  
 The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuation
 
 Homing the printer with the probe extended may damage the probe if it dragged sideways on the bed, home x and y first before homing z. Before homing it may be helpful to lift the print head 5mm to ensure the probe is clear of the surface before homing.
+
+[safe_z_home]
+home_xy_position: 0,0 # Change coordinates to the center of your print bed
+speed: 50
+z_hop: 5 # Move up 5mm
+z_hop_speed: 5
 
 [gcode_macro MACRO_NAME]
 rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
@@ -93,14 +106,62 @@ horizontal_move_z: 10
 screw_thread: CW-M3
 ```
 
-# This checks the probe status and the triggers the action
+# These macros control the probe deployment
 
+## Macro to deploy the probe
 [gcode_macro PROBE_OUT]
 gcode:
+MOVE_PROBE_TO_FREE_SPACE
+{% set probe.status = "need_to_deploy" %}
+Query_Probe #get the current probe status
+CYCLE_PROBE
+
+
+
+[gcode_macro MOVE_PROBE_TO_FREE_SPACE]
+gcode:
+  RESPOND MSG='Checking if homed'
+  {% if not 'xyz' in printer.toolhead.homed_axes %}   # Check if already homed
+      RESPOND MSG='Homing'
+      G28
+  {% endif %}
+  {% if printer.toolhead.position.z < 8 %}   # Check if the current Z position is less than 8mm
+        RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Moving up by 8mm"
+        G91 ; Set to relative positioning
+        G1 Z8 ; # Move up 8mm to clear probe extension which is approximately 6mm
+        G90 ; Set back to absolute positioning
+   {% else %}
+        RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Z is already above 8mm"
+   {% endif %}
+
+[gcode_macro CYCLE_PROBE]
+gcode:
+  {% if not 'xyz' in printer.toolhead.homed_axes %}   # If xy and z are not homed
+      { action_raise_error("Must Home X and Y Axis First!") }
+  {% endif %}
+  {% set query_probe_triggered = printer.probe.last_query %}
+    
+    # {% set query_probe_triggered = printer.probe.last_query %}
+    RESPOND MSG={test_output}
+    {% if printer.probe.last_query == "0" %}
+        RESPOND MSG="Probe is deployed!" ; Send message to console
+    {% else %}
+        RESPOND MSG="Probe is not deployed!" ; Send message to console
+    {% endif %}
+  
   G90
-  G1 Z20 #Move up to ensure probe is clear of bed
-  G4 P300
-  Query_Probe
+  G1 Z20 # move clear of bed
+  G1 X310 F4000 #move to position above trigger post
+  G1 Z3.5 # move down
+  G4 P150 # pause
+  G1 Z20 # move back up
+  G4 P150 # pause
+  G1 X100 F4000 move to middle of bed
+  
+
+
+
+    
   # If not triggered (open), probe is extended and the probe circuit is complete ready to probe
     {% if Query_Probe == 'open' %}
       RESPOND TYPE=command MSG='1 Probe is already deployed'
