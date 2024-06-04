@@ -164,7 +164,6 @@ If you need help designing a trigger post for your specific printer, let me know
 
 ### Tools
 - 3D Printer
-- 1.5mm Drill (optional)
 - Multimeter to check for continuity
 - Wire Cutters
 
