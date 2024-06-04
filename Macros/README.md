@@ -112,9 +112,9 @@ screw_thread: CW-M3
 [gcode_macro PROBE_OUT]
 gcode:
 MOVE_PROBE_TO_FREE_SPACE
-{% set probe.status = "need_to_deploy" %}
+{% set probe_status = "need_to_deploy" %}
 Query_Probe #get the current probe status
-CYCLE_PROBE
+SET_PROBE
 
 
 
@@ -134,13 +134,27 @@ gcode:
         RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Z is already above 8mm"
    {% endif %}
 
-[gcode_macro CYCLE_PROBE]
+[gcode_macro SET_PROBE]
 gcode:
-  {% if not 'xyz' in printer.toolhead.homed_axes %}   # If xy and z are not homed
-      { action_raise_error("Must Home X and Y Axis First!") }
   {% endif %}
-  {% set query_probe_triggered = printer.probe.last_query %}
-    
+  {% if probe.status == "need_to_deploy" %}
+      {% if printer.probe.last_query == "0" %}
+        RESPOND MSG="Probe is already deployed!" ; Send message to console
+      {% else %}
+        RESPOND MSG="Deploying Probe!" ; Send message to console
+        CYCLE_PROBE
+      {% endif %}
+  {% endif %}
+  {% if probe.status == "need_to_retract" %}
+    {% if printer.probe.last_query == "1" %}
+        RESPOND MSG="Probe is already retracted!" ; Send message to console
+    {% else %}
+        RESPOND MSG="Retracting Probe!" ; Send message to console
+        CYCLE_PROBE
+    {% endif %}
+  {% endif %}
+
+        
     # {% set query_probe_triggered = printer.probe.last_query %}
     RESPOND MSG={test_output}
     {% if printer.probe.last_query == "0" %}
@@ -148,16 +162,21 @@ gcode:
     {% else %}
         RESPOND MSG="Probe is not deployed!" ; Send message to console
     {% endif %}
-  
-  G90
-  G1 Z20 # move clear of bed
-  G1 X310 F4000 #move to position above trigger post
-  G1 Z3.5 # move down
-  G4 P150 # pause
-  G1 Z20 # move back up
-  G4 P150 # pause
-  G1 X100 F4000 move to middle of bed
-  
+
+  [gcode_macro CYCLE_PROBE]
+  {% if not 'xyz' in printer.toolhead.homed_axes %}   # If xy and z are not homed
+      { action_raise_error("Must Home X and Y Axis First!") }
+   {% else %}
+   G90
+   G1 Z20 # move clear of bed
+   G1 X310 F4000 #move to position above trigger post
+   G1 Z3.5 # move down
+   G4 P150 # pause
+   G1 Z20 # move back up
+   G4 P150 # pause
+   G1 X100 F4000 move to middle of bed
+   {% endif %}
+
 
 
 
