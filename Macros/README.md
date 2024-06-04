@@ -2,15 +2,32 @@
 
 
 The macros are similar to those for other docable probes [here](docs/Dockable_Probe.md)
-These macros are based on the KlackEnder 
-Include the probe details - this example is for the CR10v2, adjust for your printer
 
-``` CR10v2 Probe details maccro
+The standard macros do not include the deployment and retration of the probe so these actions can be added to  macro as needing using the following format:
+
+The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuation
+
+Homing the printer with the probe extended may damage the probe if it dragged sideways on the bed, home x and y first before homing z. Before homing it may be helpful to lift the print head 5mm to ensure the probe is clear of the surface before homing.
+
+[gcode_macro MACRO_NAME]
+rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
+gcode:
+  PROBE_OUT  #Deploy the probe
+  _MACRO_NAME #Call the original macro that was renamed
+  PROBE_IN  #Retract the probe
+
+The movements to retract and demply the probe are identicle however there are spearate macros for PROBE_OUT and PROBE_IN that check the current status of the probe before perforning the action.
+
+Note also that due to the way templates are evaluated we have separate macros for checking status and setting a global variable prior to the if statements.
+
+## Include the configuration for the probe details
+
+``` CR10v2 Probe configuration
 [probe]
-pin: ^PD2 #Probe pin for CR10v2 2.5.2 Board (Replaces BLTouch)
-x_offset: 50
-y_offset: -3.4
-#z_offset: -6
+pin: ^PD2 #Probe pin for CR10v2 2.5.2 Board (Uses the BLTouch connections)
+x_offset: 50 #probe to nozzle x distance
+y_offset: -3.4 #probe to nozzle y distance
+#z_offset: -6 #probe to nozzle z distance, this gets overwritten by the callibration macro
 speed: 5
 lift_speed: 50.0
 samples:2
@@ -20,11 +37,13 @@ samples_tolerance: 0.01
 samples_tolerance_retries: 6
 ```
 
-Include a macro for the bed mesh settings, adjust to allow for bed size and probe offset from the nozzle:
-``` bed mesh macro
+## Include the configuration for the bed mesh settings, adjust to allow for bed size and probe offset from the nozzle:
+Change the setting for mesh size and coverage to suit your printer.
+
+``` bed mesh configuration
 [bed_mesh]
 speed: 100
-horizontal_move_z: 5
+horizontal_move_z: 5  #Height of the Z above the bed during the horizontal moves between points
 mesh_min: 50,5
 mesh_max: 250,290
 probe_count: 5,5
@@ -56,9 +75,10 @@ mesh_pps: 4,4
 #   results in more curvature in the mesh. Default is .2.
 ```
 
+## This configuration is used for levelling using the probe to measure the bed height above each corner screw. 
+Change the X, Y positions and screw thread type to suit your printer.
 
-This allows the bed to be manually levelled  using the probe to measure the height above each corner screw. Change the X, Y positions and screw thread type to suit your printer.
-``` Screw tile adjust
+``` Include the configuration for screw tile adjust
 [screws_tilt_adjust]
 screw1: 0,29
 screw1_name: front left screw
@@ -73,10 +93,28 @@ horizontal_move_z: 10
 screw_thread: CW-M3
 ```
 
+# This checks the probe status and the triggers the action
 
-
-
-
+[gcode_macro PROBE_OUT]
+gcode:
+  G90
+  G1 Z20 #Move up to ensure probe is clear of bed
+  G4 P300
+  Query_Probe
+  # If not triggered (open), probe is extended and the probe circuit is complete ready to probe
+    {% if Query_Probe == 'open' %}
+      RESPOND TYPE=command MSG='1 Probe is already deployed'
+    {% else %}
+      CYCLE_PROBE
+      Query_Probe
+      # Check to see if deployment successful with probe extended and the probe circuit is complete ready to probe
+        {% if not Query_Probe_triggered %}
+        RESPOND TYPE=command MSG='2 Probe is now deployed'
+        {% else %}
+        RESPOND TYPE=command MSG='3 Probe did not deploy'
+        # { action_raise_error("Probe deployment failed!") }
+        {% endif %}
+    {% endif %}
 
 ```macro
  dock_position: 300, 295, 0
