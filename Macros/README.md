@@ -115,8 +115,8 @@ gcode:
   G1 X100 F4000 # move x position to middle of bed or other preferred start point
 ```
 
-# Modifications to standard Klipper Functions
-The following macros modify the existing functions to include the EXTEND and RETRACT process.
+# Modifications to standard Klipper macros
+The following macros modify the existing macros to include the EXTEND and RETRACT macros.
 
 ## Macro for bed mesh calibrate
 ```BED_MESH_CALIBRATE
