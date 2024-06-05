@@ -8,6 +8,8 @@ The inspiration for this is the Klicky probe (and other similar devices) that ha
 
 All the details, instructions and printable parts for the Latchy Probe are shared [here](https://github.com/open-pages-org/LatchyProbe) in Github, contributions to the project are welcome.
 
+[![LatchyProbeVideo](http://i3.ytimg.com/vi/WSevWaxVk6s/hqdefault.jpg))](https://youtu.be/WSevWaxVk6s))
+
 ## Objectives
 - Drop-in replacement for Omron TL-Q5MC2 or PL-08N2 (no need to replace the toolhead)
 - No soldering required
