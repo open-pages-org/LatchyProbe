@@ -6,6 +6,8 @@ Having a printer with no auto bed leveling is frustrating. While BL-Touch is a c
 
 The inspiration for this is the Klicky probe (and other similar devices) that have led the way. The objectives for this project are almost identical to the Klicky objectives: [Klicky Probe Objectives](https://github.com/jlas1/Klicky-Probe/blob/main/README.md).
 
+All the details are shared [here](https://github.com/open-pages-org/LatchyProbe) in Github
+
 ## Objectives
 - Drop-in replacement for Omron TL-Q5MC2 or PL-08N2 (no need to replace the toolhead)
 - No soldering required
