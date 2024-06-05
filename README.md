@@ -150,7 +150,7 @@ The table below provides the list of currently avaialble trigger posts for vario
 
 Measure the height from the frame to the bed and add 5mm. When printing, scale the triggger post STL file in Z direction so the height is correct.
 
-<img src="Images/LatchyTriggerPost.jpg" alt="Trigger post mounted to frame" height="400" /> <img src="Images/LatchyTriggerPost Voron 2.4.jpg" alt="Trigger post mounted to Voron frame" height="400" />
+<img src="Images/LatchyTriggerPost.jpg" alt="Trigger post mounted to frame" height="300" /> <img src="Images/LatchyTriggerPost Voron 2.4.jpg" alt="Trigger post mounted to Voron frame" height="300" />
 
 
 If you need help designing a trigger post for your specific printer, let me know, and I can help create some standard parts. I welcome sharing of trigger posts and mounts submitted by users; please message me, and I will include them in the STL folders.
