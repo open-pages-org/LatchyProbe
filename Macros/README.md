@@ -1,41 +1,181 @@
 # Klipper macros
+The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuration. These macros have been developed based on examples from Klicky, Unclicky, Euclid, etc., further printer examples will be added as they are developed.
 
-
-The macros are similar to those for other dockable probes [here](docs/Dockable_Probe.md) 
-
-The example macros below are for the CR10v2, the positions will need to be changed to suit your printer configuation
-
-The standard macros do not include the deployment and retration of the probe so these actions can be added to  macro as needing using the following format:
+The standard Klipper macros do not include the deployment and retraction of the probe so these actions can be added to macro as needing using the following format:
 
 ``` general format
 [gcode_macro MACRO_NAME]
 rename_existing: _MACRO_NAME # Renames the existing macro with and underscore prefix
 gcode:
-  PROBE_OUT  #Deploy the probe
+  PROBE_EXTEND  #Deploy the probe
   _MACRO_NAME #Call the original macro that was renamed
-  PROBE_IN  #Retract the probe
+  PROBE_RETRACT  #Retract the probe
 ```
 
-Homing the printer with the probe extended may damage the probe if it dragged sideways on the bed, home x and y first before homing z. Before homing it may be helpful to lift the print head 5mm to ensure the probe is clear of the surface before homing.
+Homing the printer with the probe extended may damage the probe if it dragged sideways on the bed. Use 5mm z hop and home x and y first before homing z.
 
 ``` Safe Z Home
 [safe_z_home]
-home_xy_position: 0,0 # Change coordinates to the center of your print bed
+home_xy_position: 0,0 # Change coordinates to the preferred location on your print bed
 speed: 50
 z_hop: 5 # Move up 5mm
 z_hop_speed: 5
 ```
 
-The movements to retract and demply the probe are identical however there are separate macros for PROBE_OUT and PROBE_IN that check the current status of the probe before perforning the action. Note also, due to the way templates are evaluated, separate macros are needed for checking the status to the macros for perforing actions.
+# The following macros control the probe deployment and motion
+The movements to retract and extend the probe are identical however there are separate macros for PROBE_EXTEND and PROBE_RETRACT that check the status of the probe before performing the action. Note also, due to the way templates are evaluated, separate macros are needed for checking the status to the macros before performing actions.
 
-## Include the configuration for the probe details
+For example, before running a bed mesh calibrate use Probe_Extend and then afterward use PROBE_RETRACT before printing.
 
+The following macros are all needed and work together when using the probe. 
+- PROBE_EXTEND
+- PROBE_RETRACT
+- MOVE_PROBE_CLEAR
+- SET_PROBE
+- CYCLE_PROBE
+
+## Macro to prepare the probe ready for use
+This will initiate all steps needed to use the probe.
+```PROBE_EXTEND
+[gcode_macro PROBE_EXTEND]
+gcode:
+  MOVE_PROBE_CLEAR # ensure the probe is not pressed in by the bed before checking status
+  Query_Probe #get the current probe status
+  SET_PROBE ACTION=extend
+```
+## Macro to retract the probe after use
+This will retract the probe after use but can also be used after a printer restart or before printing to ensure the probe is retracted.
+```PROBE_RETRACT
+[gcode_macro PROBE_RETRACT]
+gcode:
+  MOVE_PROBE_CLEAR # ensure the probe is not pressed in by the bed before checking status
+  Query_Probe #get the current probe status
+  SET_PROBE ACTION=retract
+```
+
+## Macro to move the head away from the bed before checking the probe
+This makes sure the probe is not pressed so the Query_Probe result can be used to check the latched position of the probe. 
+It also makes sure the printer is homed before using the probe.
+```MOVE_PROBE_CLEAR
+[gcode_macro MOVE_PROBE_CLEAR]
+gcode:
+  {% if not 'xyz' in printer.toolhead.homed_axes %}   # Check if already homed
+      RESPOND MSG='Homing first'
+      G28
+  {% endif %}
+  {% if printer.toolhead.position.z < 8 %}   # Check if the current Z position is less than 8mm
+        RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Moving up by 8mm"
+        G91 ; Set to relative positioning
+        G1 Z8 ; # Move up 8mm to clear probe extension which is approximately 6mm
+        G90 ; Set back to absolute positioning
+  {% endif %}
+  RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Probe is clear of bed"
+```
+
+## Macro to set the probe to either retract or extend
+This will check the current probe setting and call for the probe to be cycled if needed. 
+Query_Probe must be used before this macro and then use 'SET_PROBE ACTION=retract' or 'SET_PROBE ACTION=extend'
+```SET_PROBE
+[gcode_macro SET_PROBE]
+gcode:
+  {% set probe_action = params.ACTION %}
+  {% if probe_action == "extend" %}
+      {% if printer.probe.last_query == 0 %}
+        RESPOND MSG=" Probe is already extended! " ; Send message to console
+      {% else %}
+        RESPOND MSG=" Extending probe " ; Send message to console
+        CYCLE_PROBE
+      {% endif %}
+  {% elif probe_action == "retract" %}
+    {% if printer.probe.last_query == 1 %}
+        RESPOND MSG=" Probe is already retracted! " ; Send message to console
+    {% else %}
+        RESPOND MSG=" Retracting probe! " ; Send message to console
+        CYCLE_PROBE
+    {% endif %}
+  {% endif %}
+  Query_Probe
+ ```
+       
+ ## Macro to push the probe onto the trigger post to retract or extend
+ This will cycle the probe from one state to the other.
+```CYCLE_PROBE
+[gcode_macro CYCLE_PROBE]
+gcode:
+  {% if not 'xy' in printer.toolhead.homed_axes %}   # If x and y are not homed
+      { action_raise_error("Must Home X and Y Axis First!") }
+  {% endif %}
+  G90 # Set absolute positioning
+  G1 Z20 # set Z height clear of trigger post
+  G1 X310 F4000 # move x position over trigger post (include y position if needed)
+  G1 Z3.5 # move Z down to the latching point (obtain this value by setting the probe over the trigger post and jogging z down until the click is heard and subtract 0.5mm for reliability)
+  G4 P100 Pause
+  G1 Z20 # set Z height clear of trigger post
+  G4 P100 Pause
+  G1 X100 F4000 # move x position to middle of bed or other preferred start point
+```
+
+# Modifications to standard Klipper Functions
+The following macros modify the existing functions to include the EXTEND and RETRACT process.
+
+## Macro for bed mesh calibrate
+```BED_MESH_CALIBRATE
+[gcode_macro BED_MESH_CALIBRATE]
+rename_existing: _BED_MESH_CALIBRATE
+gcode:
+  PROBE_EXTEND
+  _BED_MESH_CALIBRATE
+  PROBE_RETRACT
+```
+
+## Macro for probe callibration
+```PROBE_CALIBRATE
+[gcode_macro PROBE_CALIBRATE]
+rename_existing: _PROBE_CALIBRATE
+gcode:
+  PROBE_EXTEND
+  G90
+  G1 Z20
+  G1 X115 Y115 F20000
+  _PROBE_CALIBRATE
+  TESTZ Z=20
+  PROBE_RETRACT
+```
+
+## Macro for checking the probe accuracy
+```PROBE_ACCURACY
+[gcode_macro PROBE_ACCURACY]
+rename_existing: _PROBE_ACCURACY
+gcode:
+  PROBE_EXTEND
+  G90
+  G1 Y115 X115 F20000
+  _PROBE_ACCURACY
+  PROBE_RETRACT
+```
+
+## Macro for adjust z tilt 
+Note, this is if you have a setup that allows independent control of z motors, this does not apply for CR10v2.
+```Z_TILT_ADJUST
+[gcode_macro Z_TILT_ADJUST]
+rename_existing: _Z_TILT_ADJUST
+gcode:
+PROBE_EXTEND
+Z_TILT_ADJUST
+PROBE_RETRACT
+```
+
+# Printer and probe configuration details
+The following configurations also need to be added to Printer.cfg when adding a probe
+
+# Configuration of the probe
+This is based on the configuration for the CR10v2, change the settings for other printers
 ``` CR10v2 Probe configuration
 [probe]
 pin: ^PD2 #Probe pin for CR10v2 2.5.2 Board (Uses the BLTouch connections)
 x_offset: 50 #probe to nozzle x distance
 y_offset: -3.4 #probe to nozzle y distance
-#z_offset: -6 #probe to nozzle z distance, this gets overwritten by the callibration macro
+#z_offset: -6 #probe to nozzle z distance, this gets overwritten by the calibration macro
 speed: 5
 lift_speed: 50.0
 samples:2
@@ -45,9 +185,8 @@ samples_tolerance: 0.01
 samples_tolerance_retries: 6
 ```
 
-## Include the configuration for the bed mesh settings, adjust to allow for bed size and probe offset from the nozzle:
+## Configuration for the bed mesh settings
 Change the setting for mesh size and coverage to suit your printer.
-
 ``` bed mesh configuration
 [bed_mesh]
 speed: 100
@@ -83,10 +222,9 @@ mesh_pps: 4,4
 #   results in more curvature in the mesh. Default is .2.
 ```
 
-## This configuration is used for levelling using the probe to measure the bed height above each corner screw. 
-Change the X, Y positions and screw thread type to suit your printer.
-
-``` Include the configuration for screw tile adjust
+## Configuration for bed screw tilt adjustment
+This is used when measuring the bed height above each corner screw for manual adjustment. Change the X, Y positions and screw thread type to suit your printer.
+``` screw tile adjust
 [screws_tilt_adjust]
 screw1: 0,29
 screw1_name: front left screw
@@ -101,96 +239,3 @@ horizontal_move_z: 10
 screw_thread: CW-M3
 ```
 
-# The following macros control the probe deployment and motion
-
-## Macro to deploy the probe
-[gcode_macro PROBE_OUT]
-gcode:
-MOVE_PROBE_TO_FREE_SPACE
-{% set probe_status = "need_to_deploy" %}
-Query_Probe #get the current probe status
-SET_PROBE
-
-
-
-[gcode_macro MOVE_PROBE_TO_FREE_SPACE]
-gcode:
-  RESPOND MSG='Checking if homed'
-  {% if not 'xyz' in printer.toolhead.homed_axes %}   # Check if already homed
-      RESPOND MSG='Homing'
-      G28
-  {% endif %}
-  {% if printer.toolhead.position.z < 8 %}   # Check if the current Z position is less than 8mm
-        RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Moving up by 8mm"
-        G91 ; Set to relative positioning
-        G1 Z8 ; # Move up 8mm to clear probe extension which is approximately 6mm
-        G90 ; Set back to absolute positioning
-   {% else %}
-        RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Z is already above 8mm"
-   {% endif %}
-
-[gcode_macro SET_PROBE]
-gcode:
-  {% endif %}
-  {% if probe.status == "need_to_deploy" %}
-      {% if printer.probe.last_query == "0" %}
-        RESPOND MSG="Probe is already deployed!" ; Send message to console
-      {% else %}
-        RESPOND MSG="Deploying Probe!" ; Send message to console
-        CYCLE_PROBE
-      {% endif %}
-  {% endif %}
-  {% if probe.status == "need_to_retract" %}
-    {% if printer.probe.last_query == "1" %}
-        RESPOND MSG="Probe is already retracted!" ; Send message to console
-    {% else %}
-        RESPOND MSG="Retracting Probe!" ; Send message to console
-        CYCLE_PROBE
-    {% endif %}
-  {% endif %}
-
-        
-    # {% set query_probe_triggered = printer.probe.last_query %}
-    RESPOND MSG={test_output}
-    {% if printer.probe.last_query == "0" %}
-        RESPOND MSG="Probe is deployed!" ; Send message to console
-    {% else %}
-        RESPOND MSG="Probe is not deployed!" ; Send message to console
-    {% endif %}
-
-  [gcode_macro CYCLE_PROBE]
-  {% if not 'xyz' in printer.toolhead.homed_axes %}   # If xy and z are not homed
-      { action_raise_error("Must Home X and Y Axis First!") }
-   {% else %}
-   G90
-   G1 Z20 # move clear of bed
-   G1 X310 F4000 #move to position above trigger post
-   G1 Z3.5 # move down
-   G4 P150 # pause
-   G1 Z20 # move back up
-   G4 P150 # pause
-   G1 X100 F4000 move to middle of bed
-   {% endif %}
-
-
-
-
-    
-  # If not triggered (open), probe is extended and the probe circuit is complete ready to probe
-    {% if Query_Probe == 'open' %}
-      RESPOND TYPE=command MSG='1 Probe is already deployed'
-    {% else %}
-      CYCLE_PROBE
-      Query_Probe
-      # Check to see if deployment successful with probe extended and the probe circuit is complete ready to probe
-        {% if not Query_Probe_triggered %}
-        RESPOND TYPE=command MSG='2 Probe is now deployed'
-        {% else %}
-        RESPOND TYPE=command MSG='3 Probe did not deploy'
-        # { action_raise_error("Probe deployment failed!") }
-        {% endif %}
-    {% endif %}
-
-```macro
- dock_position: 300, 295, 0
-```
