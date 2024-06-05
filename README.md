@@ -150,7 +150,7 @@ The table below provides the list of currently avaialble trigger posts for vario
 
 Measure the height from the frame to the bed and add 5mm. When printing, scale the triggger post STL file in Z direction so the height is correct.
 
-<img src="Images/LatchyTriggerPost.jpg" alt="Trigger post mounted to frame" width="300" /> <img src="Images/LatchyTriggerPost Voron 2.4.jpg" alt="Trigger post mounted to Voron frame" width="300" />
+<img src="Images/LatchyTriggerPost.jpg" alt="Trigger post mounted to frame" height="400" /> <img src="Images/LatchyTriggerPost Voron 2.4.jpg" alt="Trigger post mounted to Voron frame" height="400" />
 
 
 If you need help designing a trigger post for your specific printer, let me know, and I can help create some standard parts. I welcome sharing of trigger posts and mounts submitted by users; please message me, and I will include them in the STL folders.
@@ -158,7 +158,7 @@ If you need help designing a trigger post for your specific printer, let me know
 | Printer | Trigger Post and mountings | Notes |
 |----------|----------|----------|
 | Creality CR10v2    | [Trigger post](STL/Trigger-Posts/) , [Mounting bracket](https://www.printables.com/model/135722-cr-10-v2-omron-tl-q5mc2-inductive-probe-mount) | The trigger post clips to the frame and can be secured with a T-nut and screw if required. |
-| Voron 2.4   | [Trigger post V2.4](STL/Trigger Posts/LatchyTriggerPost_Voron 2.4.stl)     | The trigger post is screwed to the frame using T-Nuts, print flat and scale in x or y if alternative height is needed. |
+| Voron 2.4   | [Trigger post V2.4](STL/Trigger-Posts/LatchyTriggerPost_Voron2.4.stl)     | The trigger post is screwed to the frame using T-Nuts, print flat and scale in x or y if alternative height is needed. |
 | Voron Trident   | TBC     | |
 
 
