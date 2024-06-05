@@ -158,7 +158,7 @@ If you need help designing a trigger post for your specific printer, let me know
 | Printer | Trigger Post and mountings | Notes |
 |----------|----------|----------|
 | Creality CR10v2    | [Trigger post](STL/Trigger-Posts/) , [Mounting bracket](https://www.printables.com/model/135722-cr-10-v2-omron-tl-q5mc2-inductive-probe-mount) | The trigger post clips to the frame and can be secured with a T-nut and screw if required. |
-| Voron 2.4   | TBC     | |
+| Voron 2.4   | [Trigger post V2.4](STL/Trigger Posts/LatchyTriggerPost_Voron 2.4.stl)     | The trigger post is screwed to the frame using T-Nuts, print flat and scale in x or y if alternative height is needed. |
 | Voron Trident   | TBC     | |
 
 
