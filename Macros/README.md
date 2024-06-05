@@ -34,7 +34,7 @@ The following macros are all needed and work together when using the probe.
 - SET_PROBE
 - CYCLE_PROBE
 
-## Macro to prepare the probe ready for use
+## Macro PROBE_EXTEND to prepare the probe ready for use
 This will initiate all steps needed to use the probe.
 ```PROBE_EXTEND
 [gcode_macro PROBE_EXTEND]
@@ -43,7 +43,7 @@ gcode:
   Query_Probe #get the current probe status
   SET_PROBE ACTION=extend
 ```
-## Macro to retract the probe after use
+## Macro PROBE_RETRACT to retract the probe after use
 This will retract the probe after use but can also be used after a printer restart or before printing to ensure the probe is retracted.
 ```PROBE_RETRACT
 [gcode_macro PROBE_RETRACT]
@@ -53,7 +53,7 @@ gcode:
   SET_PROBE ACTION=retract
 ```
 
-## Macro to move the head away from the bed before checking the probe
+## Macro MOVE_PROBE_CLEAR to move the head away from the bed before checking the probe
 This makes sure the probe is not pressed so the Query_Probe result can be used to check the latched position of the probe. 
 It also makes sure the printer is homed before using the probe.
 ```MOVE_PROBE_CLEAR
@@ -72,7 +72,7 @@ gcode:
   RESPOND MSG="Current Z position: { printer.toolhead.position.z } - Probe is clear of bed"
 ```
 
-## Macro to set the probe to either retract or extend
+## Macro SET_PROBE to set the probe to either retract or extend
 This will check the current probe setting and call for the probe to be cycled if needed. 
 Query_Probe must be used before this macro and then use 'SET_PROBE ACTION=retract' or 'SET_PROBE ACTION=extend'
 ```SET_PROBE
@@ -97,7 +97,7 @@ gcode:
   Query_Probe
  ```
        
- ## Macro to push the probe onto the trigger post to retract or extend
+ ## Macro CYCLE_PROBE to push the probe onto the trigger post to retract or extend
  This will cycle the probe from one state to the other.
 ```CYCLE_PROBE
 [gcode_macro CYCLE_PROBE]
